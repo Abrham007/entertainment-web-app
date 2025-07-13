@@ -82,7 +82,7 @@ const Nav: FC = () => {
             <DropdownMenuSeparator className="bg-[#10141E]" />
             {customClaims?.admin ? (
               <DropdownMenuItem className="text-white text-xl">
-                <Link href="/admin-dashbaord">Admin Dashboard</Link>
+                <Link href="/admin-dashboard">Admin Dashboard</Link>
               </DropdownMenuItem>
             ) : null}
             <DropdownMenuItem className="text-white text-xl">
