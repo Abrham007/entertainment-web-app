@@ -110,3 +110,26 @@ export const showSchema = z.object({
 export type ShowsSchema = z.infer<typeof showSchema>;
 
 export type ShowSchema = ShowsSchema["results"][number];
+
+// Schema for a single video item
+const VideoInfoSchema = z.object({
+  iso_639_1: z.string(),
+  iso_3166_1: z.string(),
+  name: z.string(),
+  key: z.string(),
+  site: z.string(),
+  size: z.number(),
+  type: z.string(),
+  official: z.boolean(),
+  published_at: z.string(),
+  id: z.string(),
+});
+
+// Top‐level schema
+export const VideosInfoSchema = z.object({
+  id: z.number(),
+  results: z.array(VideoInfoSchema),
+});
+
+// Inferred TypeScript type
+export type VideosInfo = z.infer<typeof VideosInfoSchema>;

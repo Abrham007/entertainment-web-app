@@ -7,10 +7,10 @@ import { getTvShows } from "./actions";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
 
 export default function TvShows() {
-  const { populateBookmarks } = useBookmarkStore();
+  const { bookmarkes, populateBookmarks } = useBookmarkStore();
   const { data, isLoading } = useQuery({
     queryFn: async () => {
-      await populateBookmarks();
+      await populateBookmarks(bookmarkes);
       return getTvShows();
     },
     queryKey: ["tv"],

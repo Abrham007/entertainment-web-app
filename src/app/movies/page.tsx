@@ -7,10 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
 
 export default function Movies() {
-  const { populateBookmarks } = useBookmarkStore();
+  const { bookmarkes, populateBookmarks } = useBookmarkStore();
   const { data, isLoading } = useQuery({
     queryFn: async () => {
-      await populateBookmarks();
+      await populateBookmarks(bookmarkes);
       return getMovies();
     },
     queryKey: ["movies"],

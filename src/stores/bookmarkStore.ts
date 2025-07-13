@@ -6,7 +6,7 @@ type BookmarkStore = {
   bookmarks: Array<ShowSchema>;
   addBookmarks: (show: Array<ShowSchema>) => void;
   removeBookmark: (showId: number) => void;
-  populateBookmarks: () => Promise<void>;
+  populateBookmarks: (bookmarkes: Array<ShowSchema>) => Promise<void>;
 };
 
 export const useBookmarkStore = create<BookmarkStore>()((set) => ({
@@ -14,9 +14,12 @@ export const useBookmarkStore = create<BookmarkStore>()((set) => ({
   addBookmarks: (shows) => {
     set((state) => ({ bookmarks: [...state.bookmarks, ...shows] }));
   },
-  populateBookmarks: async () => {
-    const dbBookmarks = await getBookmarks();
+  populateBookmarks: async (bookmarkes: Array<ShowSchema>) => {
+    if (!!bookmarkes.length) {
+      return;
+    }
 
+    const dbBookmarks = await getBookmarks();
     set((state) => {
       if (!state.bookmarks.length) {
         return { bookmarks: dbBookmarks };

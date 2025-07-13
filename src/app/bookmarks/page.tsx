@@ -9,7 +9,7 @@ export default function Bookmarks() {
   const { bookmarks, populateBookmarks } = useBookmarkStore();
   const { data, isLoading } = useQuery({
     queryFn: async () => {
-      await populateBookmarks();
+      await populateBookmarks(bookmarks);
 
       return bookmarks;
     },

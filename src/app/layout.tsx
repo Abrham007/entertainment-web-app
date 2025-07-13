@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import Script from "next/script";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`relative ${outfit.variable} antialiased`}>
         <Providers>{children}</Providers>
+        <Script src="https://www.youtube.com/iframe_api"></Script>
       </body>
     </html>
   );

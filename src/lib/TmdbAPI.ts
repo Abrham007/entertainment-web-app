@@ -1,4 +1,9 @@
-import { ConfigirationShema, ShowsSchema } from "@/validation/tmbdSchema";
+import {
+  ConfigirationShema,
+  ShowSchema,
+  ShowsSchema,
+  VideosInfo,
+} from "@/validation/tmbdSchema";
 
 export default class TmdbApi {
   static getConfigiration = async () => {
@@ -21,6 +26,39 @@ export default class TmdbApi {
       }
 
       const json = (await respose.json()) as ConfigirationShema;
+      return json;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      throw new Error(
+        error?.message ?? "Some thing went wrong with fetching the data"
+      );
+    }
+  };
+
+  static getVideoInfomation = async (
+    id: number,
+    type: ShowSchema["media_type"]
+  ) => {
+    const url =
+      type === "movie"
+        ? `https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`
+        : `https://api.themoviedb.org/3/tv/${id}/videos?language=en-US`;
+    try {
+      const respose = await fetch(url, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      });
+
+      if (!respose.ok) {
+        throw new Error(
+          "Coudn't get the video information please check connection and try again"
+        );
+      }
+
+      const json = (await respose.json()) as VideosInfo;
       return json;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
