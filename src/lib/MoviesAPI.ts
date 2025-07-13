@@ -10,7 +10,7 @@ export default class MoviesAPI {
     const url =
       type === "movie"
         ? `https://moviesapi.to/api/discover/movie?query=${query}&year=${year}`
-        : `https://moviesapi.to/api/discover/tv?query=${query}}`;
+        : `https://moviesapi.to/api/discover/tv?query=${query}`;
     try {
       const respose = await fetch(url, {
         method: "GET",
