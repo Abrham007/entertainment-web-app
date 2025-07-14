@@ -18,7 +18,7 @@ interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const SearchInput: FC<SearchInputProps> = ({ children }) => {
   const [searchText, setSearchText] = useState("");
-  const { bookmarkes, populateBookmarks } = useBookmarkStore();
+  const { bookmarks, populateBookmarks } = useBookmarkStore();
   const pathname = usePathname();
 
   const { placeholder, type } = useMemo(() => {
@@ -48,8 +48,8 @@ const SearchInput: FC<SearchInputProps> = ({ children }) => {
   const { data: searchData, isLoading: searchIsLoading } = useQuery({
     queryFn: async () => {
       if (type === "bookmarks") {
-        await populateBookmarks(bookmarkes);
-        return bookmarkes;
+        await populateBookmarks(bookmarks);
+        return bookmarks;
       }
 
       return getSearchedShows(
@@ -64,27 +64,27 @@ const SearchInput: FC<SearchInputProps> = ({ children }) => {
   const movieFuse = useMemo(
     () =>
       new Fuse(
-        bookmarkes.filter((show) => show.media_type === "movie"),
+        bookmarks.filter((show) => show.media_type === "movie"),
         {
           keys: ["title", "original_title"],
           threshold: 0.3, // 0.0 = exact match, 1.0 = very fuzzy
           includeScore: true, // include match score in results
         }
       ),
-    [bookmarkes]
+    [bookmarks]
   );
 
   const tvFuse = useMemo(
     () =>
       new Fuse(
-        bookmarkes.filter((show) => show.media_type === "tv"),
+        bookmarks.filter((show) => show.media_type === "tv"),
         {
           keys: ["name", "original_name"],
           threshold: 0.3, // 0.0 = exact match, 1.0 = very fuzzy
           includeScore: true, // include match score in results
         }
       ),
-    [bookmarkes]
+    [bookmarks]
   );
 
   const searchContent =

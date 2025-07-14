@@ -9,11 +9,11 @@ import _ from "lodash";
 import SearchInput from "@/components/ui/SearchInput";
 
 export default function Home() {
-  const { bookmarkes, populateBookmarks } = useBookmarkStore();
+  const { bookmarks, populateBookmarks } = useBookmarkStore();
 
   const { data: trendingData, isLoading: trendingIsLoading } = useQuery({
     queryFn: async () => {
-      await populateBookmarks(bookmarkes);
+      await populateBookmarks(bookmarks);
       return _.shuffle(await getTrending());
     },
     queryKey: ["trending"],

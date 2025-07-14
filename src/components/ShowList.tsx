@@ -26,7 +26,7 @@ const ShowList: FC<ShowListProps> = ({
           {_.range(4).map((index) => (
             <Skeleton
               key={index}
-              className="w-60 h-[140px] sm:w-[470px] sm:h-[230px] rounded-[8px]"
+              className="w-60 h-[140px] sm:w-[470px] sm:h-[230px] rounded-[8px] bg-[#5A698F]"
             />
           ))}
         </div>
@@ -34,10 +34,10 @@ const ShowList: FC<ShowListProps> = ({
     ) : (
       <div className="max-w-screen overflow-x-scroll lg:pr-40">
         <div className="min-w-fit flex justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-x-10 lg:gap-y-6 flex-wrap">
-          {_.range(15).map((index) => (
+          {_.range(20).map((index) => (
             <Skeleton
               key={index}
-              className="w-[164px] h-[110px] sm:w-[220px] sm:h-[140px] lg:w-[280px] lg:h-[174px] rounded-[8px]"
+              className="w-[164px] h-[110px] sm:w-[220px] sm:h-[140px] lg:w-[280px] lg:h-[174px] rounded-[8px] bg-[#5A698F]"
             />
           ))}
         </div>
@@ -70,7 +70,7 @@ const ShowList: FC<ShowListProps> = ({
       </div>
     </div>
   ) : (
-    <div className="sm:max-w-[90%] flex-1 flex justify-start sm:justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-x-10 lg:gap-y-6 flex-wrap">
+    <div className="sm:max-w-[95%] flex-1 flex justify-start sm:justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-x-10 lg:gap-y-6 flex-wrap">
       {shows?.map((show, index) => (
         <ShowCard key={index} size="small" show={show} />
       ))}
