@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { decodeJwt } from "jose";
 
 export async function middleware(request: NextRequest) {
-  console.log("Middleware triggered");
   if (request.method === "POST") {
     return NextResponse.next();
   }
@@ -34,10 +33,6 @@ export async function middleware(request: NextRequest) {
   const decodedToken = decodeJwt(token);
 
   if (decodedToken.exp && (decodedToken.exp - 300) * 1000 < Date.now()) {
-    console.log(
-      "Token is about to expire, redirecting to refresh token API",
-      request.nextUrl.pathname
-    );
     // Token is about to expire in less than 5 minutes
     return NextResponse.redirect(
       new URL(
