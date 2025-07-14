@@ -2,32 +2,32 @@ import { getBookmarks } from "@/app/bookmarks/actions";
 import { ShowSchema } from "@/validation/tmbdSchema";
 import { create } from "zustand";
 
-type bookmarkStore = {
-  bookmarkes: Array<ShowSchema>;
+type BookmarkStore = {
+  bookmarks: Array<ShowSchema>;
   addBookmarks: (show: Array<ShowSchema>) => void;
   removeBookmark: (showId: number) => void;
   populateBookmarks: () => Promise<void>;
 };
 
-export const useBookmarkStore = create<bookmarkStore>()((set) => ({
-  bookmarkes: [],
+export const useBookmarkStore = create<BookmarkStore>()((set) => ({
+  bookmarks: [],
   addBookmarks: (shows) => {
-    set((state) => ({ bookmarkes: [...state.bookmarkes, ...shows] }));
+    set((state) => ({ bookmarks: [...state.bookmarks, ...shows] }));
   },
   populateBookmarks: async () => {
     const dbBookmarks = await getBookmarks();
 
     set((state) => {
-      if (!state.bookmarkes.length) {
-        return { bookmarkes: dbBookmarks };
+      if (!state.bookmarks.length) {
+        return { bookmarks: dbBookmarks };
       }
 
-      return { bookmarkes: state.bookmarkes };
+      return { bookmarks: state.bookmarks };
     });
   },
   removeBookmark: (showId) => {
     set((state) => ({
-      bookmarkes: state.bookmarkes.filter((bookmark) => bookmark.id !== showId),
+      bookmarks: state.bookmarks.filter((bookmark) => bookmark.id !== showId),
     }));
   },
 }));

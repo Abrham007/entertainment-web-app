@@ -18,9 +18,9 @@ interface ShowCardProps {
 }
 
 const ShowCard: FC<ShowCardProps> = ({ size, show }) => {
-  const { bookmarkes, addBookmarks, removeBookmark } = useBookmarkStore();
+  const { bookmarks, addBookmarks, removeBookmark } = useBookmarkStore();
   const { currentUser } = useAuth();
-  const isBookmarked = bookmarkes
+  const isBookmarked = bookmarks
     .map((bookmark) => bookmark.id)
     .includes(show.id);
   const { mutate: mutateAddBookmarks } = useMutation({

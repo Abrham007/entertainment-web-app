@@ -75,7 +75,6 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const handleLogOut = async () => {
-    console.log("here");
     await signOut(auth);
   };
 
