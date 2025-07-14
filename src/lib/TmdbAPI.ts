@@ -6,27 +6,55 @@ import {
 } from "@/validation/tmbdSchema";
 
 export default class TmdbApi {
-  static getConfigiration = async () => {
-    try {
-      const respose = await fetch(
-        "https://api.themoviedb.org/3/configuration",
-        {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
-          },
-        }
-      );
+  static secure_base_url = "";
+  static backdrop_base_url = "";
+  static poster_base_url = "";
 
-      if (!respose.ok) {
-        throw new Error(
-          "Coudn't get the configiration please check connection and try again"
+  private static makeShowsData = async (rawShowsData: ShowsSchema) => {
+    try {
+      if (
+        !this.secure_base_url ||
+        !this.backdrop_base_url ||
+        !this.poster_base_url
+      ) {
+        const respose = await fetch(
+          "https://api.themoviedb.org/3/configuration",
+          {
+            method: "GET",
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+            },
+          }
         );
+
+        if (!respose.ok) {
+          throw new Error(
+            "Coudn't get the configiration please check connection and try again"
+          );
+        }
+        const config = (await respose.json()) as ConfigirationShema;
+        const { secure_base_url, backdrop_sizes, poster_sizes } = config.images;
+        const backDropSize = backdrop_sizes[backdrop_sizes.length - 2];
+        const posterSize = poster_sizes[poster_sizes.length - 2];
+
+        this.secure_base_url = secure_base_url;
+        this.backdrop_base_url = secure_base_url + backDropSize;
+        this.poster_base_url = secure_base_url + posterSize;
       }
 
-      const json = (await respose.json()) as ConfigirationShema;
-      return json;
+      const showsData = rawShowsData.results
+        .filter((result) => result.backdrop_path && result.poster_path)
+        .map((result) => {
+          return {
+            ...result,
+            backdrop_path: this.backdrop_base_url + result.backdrop_path,
+            poster_path: this.poster_base_url + result.poster_path,
+            quality: "HD",
+          };
+        });
+
+      return showsData;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(
@@ -92,7 +120,7 @@ export default class TmdbApi {
         (item) => item.media_type !== "person"
       );
 
-      return json;
+      return await this.makeShowsData(json);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(
@@ -121,7 +149,11 @@ export default class TmdbApi {
       }
 
       const json = (await respose.json()) as ShowsSchema;
-      return json;
+      json.results = json.results.map((result) => ({
+        ...result,
+        media_type: "movie",
+      }));
+      return await this.makeShowsData(json);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(
@@ -150,7 +182,63 @@ export default class TmdbApi {
       }
 
       const json = (await respose.json()) as ShowsSchema;
-      return json;
+      json.results = json.results.map((result) => ({
+        ...result,
+        media_type: "tv",
+      }));
+      return await this.makeShowsData(json);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      throw new Error(
+        error?.message ?? "Some thing went wrong with fetching the data"
+      );
+    }
+  };
+
+  static getSearchShows = async (
+    type: ShowSchema["media_type"] | "movie&tv",
+    searchText: string
+  ) => {
+    let url;
+    switch (type) {
+      case "movie":
+        url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
+          searchText
+        )}&include_adult=false&language=en-US&page=1`;
+        break;
+      case "tv":
+        url = `https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(
+          searchText
+        )}&include_adult=false&language=en-US&page=1`;
+        break;
+      default:
+        url = `https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(
+          searchText
+        )}&include_adult=false&language=en-US&page=1`;
+        break;
+    }
+
+    try {
+      const respose = await fetch(url, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+        },
+      });
+
+      if (!respose.ok) {
+        throw new Error(
+          "Coudn't get the searched shows please check connection and try again"
+        );
+      }
+
+      const json = (await respose.json()) as ShowsSchema;
+      json.results = json.results.map((result) => ({
+        ...result,
+        ...(type === "movie&tv" ? {} : { media_type: type }),
+      }));
+      return await this.makeShowsData(json);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       throw new Error(

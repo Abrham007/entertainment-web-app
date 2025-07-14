@@ -5,6 +5,8 @@ import ShowCard from "./ShowCard";
 import { Skeleton } from "./ui/skeleton";
 import _ from "lodash";
 import { ShowSchema } from "@/validation/tmbdSchema";
+import Image from "next/image";
+import noDataImage from "../../public/no-data-image.png";
 
 interface ShowListProps {
   shows: Array<ShowSchema> | undefined;
@@ -43,8 +45,20 @@ const ShowList: FC<ShowListProps> = ({
     );
   }
 
-  if (!shows) {
-    <h1>Error</h1>;
+  if (!shows?.length) {
+    return (
+      <div
+        className={`relative my-7 sm:my-10 mx-auto rounded-full overflow-clip`}
+      >
+        <Image
+          src={noDataImage.src}
+          alt="Did no find the data"
+          width={noDataImage.width}
+          height={noDataImage.height}
+          className="w-[250px] sm:w-[500px] "
+        />
+      </div>
+    );
   }
 
   return isTrending ? (
@@ -56,12 +70,10 @@ const ShowList: FC<ShowListProps> = ({
       </div>
     </div>
   ) : (
-    <div className="max-w-screen overflow-x-scroll lg:pr-40">
-      <div className="min-w-fit flex justify-start sm:justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-x-10 lg:gap-y-6 flex-wrap">
-        {shows?.map((show, index) => (
-          <ShowCard key={index} size="small" show={show} />
-        ))}
-      </div>
+    <div className="sm:max-w-[90%] flex-1 flex justify-start sm:justify-center lg:justify-start gap-4 sm:gap-8 lg:gap-x-10 lg:gap-y-6 flex-wrap">
+      {shows?.map((show, index) => (
+        <ShowCard key={index} size="small" show={show} />
+      ))}
     </div>
   );
 };

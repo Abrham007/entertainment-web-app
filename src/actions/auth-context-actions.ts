@@ -3,7 +3,7 @@
 import { auth } from "../firebase/server";
 import { cookies } from "next/headers";
 
-const setToken = async ({
+export const setToken = async ({
   token,
   refreshToken,
 }: {
@@ -43,10 +43,8 @@ const setToken = async ({
   }
 };
 
-const removeToken = async () => {
+export const removeToken = async () => {
   const cookieStore = await cookies();
   cookieStore.delete("firebaseAuthToken");
   cookieStore.delete("firebaseAuthRefreshToken");
 };
-
-export { setToken, removeToken };

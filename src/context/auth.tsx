@@ -10,7 +10,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../firebase/client";
-import { removeToken, setToken } from "./actions";
+import { setToken, removeToken } from "@/actions/auth-context-actions";
 
 interface AuthContextType {
   currentUser: User | null;

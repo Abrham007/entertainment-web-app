@@ -1,4 +1,4 @@
-import { getBookmarks } from "@/app/bookmarks/actions";
+import { getBookmarks } from "@/actions/bookmarks-actions";
 import { ShowSchema } from "@/validation/tmbdSchema";
 import { create } from "zustand";
 

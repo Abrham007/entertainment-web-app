@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/validation/authSchema";
 import { useMutation } from "@tanstack/react-query";
-import registerUser from "@/app/(auth)/register/actions";
+import registerUser from "@/actions/register-actions";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 

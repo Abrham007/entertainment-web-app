@@ -14,8 +14,8 @@ const Input: FC<InputProps> = ({ error, ...props }) => {
       animate="rest"
     >
       <input
-        {...props}
         className="min-w-1 bg-transparent text-white outline-none cursor-pointer text-xl"
+        {...props}
       />
 
       {error && (

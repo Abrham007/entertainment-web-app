@@ -9,10 +9,10 @@ import { FC } from "react";
 import { ShowSchema } from "@/validation/tmbdSchema";
 import { useAuth } from "@/context/auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addBookmarks as addBookmarksToDatabase } from "@/app/bookmarks/actions";
+import { addBookmarks as addBookmarksToDatabase } from "@/actions/bookmarks-actions";
+import { getVideoInfo } from "@/actions/global-actions";
 import toast from "react-hot-toast";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
-import { getVideoInfo } from "@/app/actions";
 import IframePlayer from "./IframePlayer";
 
 interface ShowCardProps {
@@ -56,24 +56,30 @@ const PlayButtonOverlay: FC<{
 const ShowInfo: FC<{ show: ShowSchema; className?: string }> = ({
   show,
   className = "",
-}) => (
-  <p
-    className={`text-sm sm:text-xl text-white/50 font-medium flex gap-2 align-end justify-start ${className}`}
-  >
-    {[
-      new Date(show.release_date ?? show.first_air_date!).getFullYear(),
-      show.media_type,
-      show.quality?.toUpperCase() ?? "CS",
-    ].map((item, index) => (
-      <Fragment key={index}>
-        <span className="capitalize">{item}</span>
-        {index < 2 && (
-          <span className="bg-white/50 h-1 w-1 rounded-full self-center"></span>
-        )}
-      </Fragment>
-    ))}
-  </p>
-);
+}) => {
+  return (
+    <p
+      className={`text-sm sm:text-xl text-white/50 font-medium flex gap-2 align-end justify-start ${className}`}
+    >
+      {[
+        new Date(show.release_date ?? show.first_air_date!).getFullYear(),
+        show.media_type,
+        show.quality?.toUpperCase() ?? "CS",
+      ]
+        .filter((item) =>
+          typeof item === "number" && Number.isNaN(item) ? false : true
+        )
+        .map((item, index) => (
+          <Fragment key={index}>
+            <span className="capitalize">{item}</span>
+            {index < 2 && (
+              <span className="bg-white/50 h-1 w-1 rounded-full self-center"></span>
+            )}
+          </Fragment>
+        ))}
+    </p>
+  );
+};
 
 const ShowCard: FC<ShowCardProps> = ({ size, show }) => {
   const [showVideo, setShowVideo] = useState(false);

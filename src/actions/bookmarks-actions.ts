@@ -49,8 +49,7 @@ export const addBookmarks = async (authToken: string, show: ShowSchema) => {
         },
         { merge: true }
       );
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    throw new Error(error?.message ?? "Something went wrong");
+  } catch {
+    throw new Error("Failed to add bookmark");
   }
 };

@@ -20,7 +20,7 @@ const Auth: FC<AuthProps> = ({ type }) => {
         className="h-14 w-14"
       />
       <div className="max-w-[400px] sm:w-full bg-blue-900 p-6 sm:p-8  rounded-[20px] flex flex-col gap-8 m-6">
-        <h1 className="text-white text-5xl font-light">
+        <h1 className="text-white text-6xl font-light">
           {type === "login" ? "Login" : "Sign Up"}
         </h1>
         {type === "login" ? <LoginForm /> : <RegisterForm />}
