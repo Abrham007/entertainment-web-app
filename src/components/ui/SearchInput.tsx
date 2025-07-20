@@ -3,10 +3,8 @@
 import { FC, InputHTMLAttributes, ReactNode, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import SearchIcon from "./icons/SearchIcon";
-import { ShowSchema } from "@/validation/tmbdSchema";
 import _ from "lodash";
 import { useQuery } from "@tanstack/react-query";
-import { getSearchedShows } from "@/actions/global-actions";
 import ShowList from "../ShowList";
 import { usePathname } from "next/navigation";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
@@ -51,11 +49,13 @@ const SearchInput: FC<SearchInputProps> = ({ children }) => {
         await populateBookmarks(bookmarks);
         return bookmarks;
       }
-
-      return getSearchedShows(
-        type as ShowSchema["media_type"] | "movie&tv",
-        searchText
+      const res = await fetch(
+        `/api/global/search-shows?type=${type}&searchText=${encodeURIComponent(
+          searchText
+        )}`
       );
+      if (!res.ok) throw new Error("Failed to search shows");
+      return await res.json();
     },
     queryKey: ["search", type, searchText],
     enabled: !!searchText,

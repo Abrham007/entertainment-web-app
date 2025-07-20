@@ -9,11 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginShema } from "@/validation/authSchema";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const { handleGoogleLogIn, handleEmailLogIn } = useAuth();
-  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -30,6 +28,7 @@ const LoginForm = () => {
     mutationFn: async (data: z.infer<typeof loginShema> | null) => {
       if (!data) {
         await handleGoogleLogIn();
+
         return;
       }
 
@@ -37,7 +36,6 @@ const LoginForm = () => {
     },
     onSuccess: () => {
       toast.success("User logged in successfully!");
-      router.refresh();
     },
     onError: (error: unknown) => {
       if (

@@ -8,13 +8,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/validation/authSchema";
 import { useMutation } from "@tanstack/react-query";
-import registerUser from "@/actions/register-actions";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 const RegisterForm = () => {
   const { handleGoogleLogIn } = useAuth();
-  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -34,12 +31,18 @@ const RegisterForm = () => {
         await handleGoogleLogIn();
         return;
       }
-
-      await registerUser(data);
+      const res = await fetch("/api/register/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to register user");
+      }
     },
     onSuccess: () => {
       toast.success("User registered successfully!");
-      router.refresh();
     },
     onError: (error: unknown) => {
       toast.error(

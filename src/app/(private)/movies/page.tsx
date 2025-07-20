@@ -1,7 +1,6 @@
 "use client";
 
 import ShowList from "@/components/ShowList";
-import { getMovies } from "@/actions/movies-actions";
 import { useQuery } from "@tanstack/react-query";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
 import SearchInput from "@/components/ui/SearchInput";
@@ -11,7 +10,9 @@ export default function Movies() {
   const { data, isLoading } = useQuery({
     queryFn: async () => {
       await populateBookmarks(bookmarks);
-      return getMovies();
+      const res = await fetch("/api/movies/get");
+      if (!res.ok) throw new Error("Failed to fetch movies");
+      return await res.json();
     },
     queryKey: ["movies"],
   });

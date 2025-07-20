@@ -1,10 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { getTrending } from "@/actions/home-actions";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
 import ShowList from "@/components/ShowList";
-import { getMovies } from "@/actions/movies-actions";
-import { getTvShows } from "@/actions/tvshows-actions";
 import _ from "lodash";
 import SearchInput from "@/components/ui/SearchInput";
 
@@ -14,15 +11,22 @@ export default function Home() {
   const { data: trendingData, isLoading: trendingIsLoading } = useQuery({
     queryFn: async () => {
       await populateBookmarks(bookmarks);
-      return _.shuffle(await getTrending());
+      const res = await fetch("/api/home/trending");
+      if (!res.ok) throw new Error("Failed to fetch trending shows");
+      return _.shuffle(await res.json());
     },
     queryKey: ["trending"],
   });
 
   const { data: recommendedData, isLoading: recommendedIsLoading } = useQuery({
     queryFn: async () => {
-      const [movies, tv] = await Promise.all([getMovies(), getTvShows()]);
-
+      const [moviesRes, tvRes] = await Promise.all([
+        fetch("/api/movies/get"),
+        fetch("/api/tvshows/get"),
+      ]);
+      if (!moviesRes.ok || !tvRes.ok)
+        throw new Error("Failed to fetch recommended shows");
+      const [movies, tv] = await Promise.all([moviesRes.json(), tvRes.json()]);
       return _.shuffle(_.concat(movies, tv));
     },
     queryKey: ["recommended"],

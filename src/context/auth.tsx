@@ -10,7 +10,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth } from "../firebase/client";
-import { setToken, removeToken } from "@/actions/auth-context-actions";
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
   currentUser: User | null;
@@ -36,6 +36,7 @@ interface AuthProviderProps {
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [customClaims, setCustomClaims] = useState<ParsedToken | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -49,20 +50,32 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         setCustomClaims(claims ?? null);
 
         if (token && refreshToken) {
-          await setToken({
-            token,
-            refreshToken,
+          await fetch("/api/auth/set-token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, refreshToken }),
+            credentials: "include",
           });
+          router.refresh();
         } else {
-          await removeToken();
+          await fetch("/api/auth/remove-token", {
+            method: "POST",
+            credentials: "include",
+          });
+          router.refresh();
         }
       } else {
         setCustomClaims(null);
-        await removeToken();
+        await fetch("/api/auth/remove-token", {
+          method: "POST",
+          credentials: "include",
+        });
+        router.refresh();
       }
     });
 
     return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleGoogleLogIn = async () => {

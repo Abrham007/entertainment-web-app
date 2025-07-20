@@ -1,4 +1,3 @@
-import { getBookmarks } from "@/actions/bookmarks-actions";
 import { ShowSchema } from "@/validation/tmbdSchema";
 import { create } from "zustand";
 
@@ -18,13 +17,13 @@ export const useBookmarkStore = create<BookmarkStore>()((set) => ({
     if (!!bookmarks.length) {
       return;
     }
-
-    const dbBookmarks = await getBookmarks();
+    const res = await fetch("/api/bookmarks/get", { credentials: "include" });
+    if (!res.ok) throw new Error("Failed to fetch bookmarks");
+    const dbBookmarks = await res.json();
     set((state) => {
       if (!state.bookmarks.length) {
         return { bookmarks: dbBookmarks };
       }
-
       return { bookmarks: state.bookmarks };
     });
   },

@@ -9,8 +9,6 @@ import { FC } from "react";
 import { ShowSchema } from "@/validation/tmbdSchema";
 import { useAuth } from "@/context/auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addBookmarks as addBookmarksToDatabase } from "@/actions/bookmarks-actions";
-import { getVideoInfo } from "@/actions/global-actions";
 import toast from "react-hot-toast";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
 import IframePlayer from "./IframePlayer";
@@ -98,9 +96,13 @@ const ShowCard: FC<ShowCardProps> = ({ size, show }) => {
       if (!tokenResult) {
         throw new Error("User is not authorized");
       }
-
       addBookmarks([show]);
-      await addBookmarksToDatabase(tokenResult.token, show);
+      await fetch("/api/bookmarks/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ authToken: tokenResult.token, show }),
+        credentials: "include",
+      });
     },
     onError(error) {
       removeBookmark(show.id);
@@ -115,15 +117,18 @@ const ShowCard: FC<ShowCardProps> = ({ size, show }) => {
   const query = {
     queryKey: ["video-information", show.id],
     queryFn: async () => {
-      const videoInfo = await getVideoInfo(show.id, show.media_type);
+      const res = await fetch(
+        `/api/global/video-info?id=${show.id}&type=${show.media_type}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch video info");
+      const videoInfo = await res.json();
       const result = videoInfo.results?.find(
-        (result) => result.type === "Trailer" && result.site === "YouTube"
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (result: any) => result.type === "Trailer" && result.site === "YouTube"
       )?.key;
-
       if (!result) {
         throw new Error("Could not find video");
       }
-
       return result;
     },
     staleTime: 5 * 60 * 1000,

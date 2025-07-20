@@ -2,7 +2,6 @@
 
 import ShowList from "@/components/ShowList";
 import { useQuery } from "@tanstack/react-query";
-import { getTvShows } from "@/actions/tvshows-actions";
 import { useBookmarkStore } from "@/stores/bookmarkStore";
 import SearchInput from "@/components/ui/SearchInput";
 
@@ -11,7 +10,9 @@ export default function TvShows() {
   const { data, isLoading } = useQuery({
     queryFn: async () => {
       await populateBookmarks(bookmarks);
-      return getTvShows();
+      const res = await fetch("/api/tvshows/get");
+      if (!res.ok) throw new Error("Failed to fetch tv shows");
+      return await res.json();
     },
     queryKey: ["tv"],
   });

@@ -1,19 +1,13 @@
-"use server";
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/firebase/server";
 
-import { auth } from "../firebase/server";
-import { cookies } from "next/headers";
-
-export const setToken = async ({
-  token,
-  refreshToken,
-}: {
-  token: string;
-  refreshToken: string;
-}) => {
+export async function POST(req: NextRequest) {
   try {
+    const { token, refreshToken } = await req.json();
+
     const verifiedToken = await auth.verifyIdToken(token);
     if (!verifiedToken) {
-      return;
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const userRecord = await auth.getUser(verifiedToken.uid);
@@ -27,26 +21,25 @@ export const setToken = async ({
       });
     }
 
-    const cookieStore = await cookies();
+    const response = NextResponse.json({ success: true });
 
-    cookieStore.set("firebaseAuthToken", token, {
+    response.cookies.set("firebaseAuthToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
     });
-    cookieStore.set("firebaseAuthRefreshToken", refreshToken, {
+    response.cookies.set("firebaseAuthRefreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
     });
+
+    return response;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    throw new Error(`Failed to set token: ${error.message}`);
+    return NextResponse.json(
+      { error: `Failed to set token: ${error.message}` },
+      { status: 500 }
+    );
   }
-};
-
-export const removeToken = async () => {
-  const cookieStore = await cookies();
-  cookieStore.delete("firebaseAuthToken");
-  cookieStore.delete("firebaseAuthRefreshToken");
-};
+}

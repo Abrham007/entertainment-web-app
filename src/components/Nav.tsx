@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import HomeIcon from "./ui/icons/HomeIcon";
 import BookmarkNavIcon from "./ui/icons/BookmarkNavIcon";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import MoviesIcon from "./ui/icons/MoviesIcon";
 import TvShowsIcon from "./ui/icons/TvShowsIcon";
 import {
@@ -23,7 +23,6 @@ import toast from "react-hot-toast";
 
 const Nav: FC = () => {
   const { currentUser, handleLogOut, customClaims } = useAuth();
-  const router = useRouter();
   const pathname = usePathname();
 
   return (
@@ -60,7 +59,7 @@ const Nav: FC = () => {
       <div className="lg:flex-1 lg:flex lg:flex-col lg:justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Avatar className="size-9 sm:size-10 lg:size-11 border-2 border-[#10141E] bg-blue-950">
+            <Avatar className="size-9 sm:size-10 lg:size-11 border-2 border-[#10141E] bg-blue-950 cursor-pointer">
               {currentUser?.photoURL && (
                 <AvatarImage src={currentUser.photoURL} />
               )}
@@ -81,15 +80,16 @@ const Nav: FC = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-[#10141E]" />
             {customClaims?.admin ? (
-              <DropdownMenuItem className="text-white text-xl">
+              <DropdownMenuItem className="text-white text-xl cursor-pointer">
                 <Link href="/admin-dashboard">Admin Dashboard</Link>
               </DropdownMenuItem>
             ) : null}
-            <DropdownMenuItem className="text-white text-xl">
+            <DropdownMenuItem className="text-white text-xl cursor-pointer">
               <Link href="/">My Account</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-white text-xl">
+            <DropdownMenuItem className="text-white text-xl cursor-pointer">
               <button
+                className="cursor-pointer"
                 onClick={async () => {
                   toast.promise(
                     async () => {
@@ -98,7 +98,6 @@ const Nav: FC = () => {
                     {
                       loading: "Logging out user",
                       success: () => {
-                        router.refresh();
                         return "Successfull logged out user";
                       },
                       error: "Error logging out user",
