@@ -19,7 +19,7 @@ const Auth: FC<AuthProps> = ({ type }) => {
         height={videoIcon.height}
         className="h-14 w-14"
       />
-      <div className="max-w-[400px] sm:w-full bg-blue-900 p-6 sm:p-8  rounded-[20px] flex flex-col gap-8 m-6">
+      <div className="max-w-[400px] w-[90%] bg-blue-900 p-6 sm:p-8  rounded-[20px] flex flex-col gap-8 m-0">
         <h1 className="text-white text-6xl font-light">
           {type === "login" ? "Login" : "Sign Up"}
         </h1>
